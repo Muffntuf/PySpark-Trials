@@ -1,0 +1,19 @@
+2.6
+prd = spark.read.format('avro').load("/user/traceahotmail/Simplilearn/data-files/products_avro")
+prd.show()
+prd2= prd.filter(prd.product_price > 1000.00)
+prd2.show()
+prd2.write.format('avro').mode('overwrite').save("/user/traceahotmail/Simplilearn/result/scenario6/solution1")
+
+2.7
+prd2 = prd.filter(prd.product_price > 1000.00)
+prd3 = prd2.filter(prd2.product_name.contains('Treadmill'))
+prd3.write.parquet("/user/traceahotmail/Simplilearn/result/scenario6/solution2a", compression='gzip')
+
+2.8
+ord = spark.read.parquet("/user/traceahotmail/Simplilearn/data-files/orders_parquet")
+ord.show()
+ord.createOrReplaceTempView("OrderParquetTable")
+ordSQL =spark.sql("""select from_unixtime(CAST(order_date/1000 as BIGINT), 'yyyy-MM-dd') as order_date, order_status from OrderParquetTable where order_status='PENDING'""")
+ordSQL.show()
+ordSQL.write.json("/user/traceahotmail/Simplilearn/result/scenario8/solution1", compression='snappy')

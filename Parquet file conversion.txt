@@ -1,0 +1,40 @@
+
+order1 = spark.read.csv("/user/traceahotmail/Simplilearn/data-files/orders/part-m-00000")
+order1.registerTempTable("order1")
+from pyspark.sql.types import DateType
+
+ord1 = order1.select(order1.withColumn("OrderDt",order1['_c1'].cast(DateType()),order1._c2.alias("OrderNo"),order1._c3.alias("Status")).where(order1['_c3']=='COMPLETE')
+ord1.select('OrderDt','OrderNo','Status').show(10,False)
+
+order2.write.json("/user/traceahotmail/Simplilearn/result/scenario2/solution/Ord", compression='gzip')
+
+("D:/BPR-spark/sourcefile/filtered.csv")
+
+-------
+****THIS IS CORRECT*******
+Supposed to read the parquet version of orders
+parDF=spark.read.parquet("/user/traceahotmail/Simplilearn/data-files/orders_parquet")
+parDF.show()
+parDF.createOrReplaceTempView("OrderParquetTable")
+parSQL =spark.sql("""select from_unixtime(order_date,'yyyy-MM-dd') as order_date, order_customer_id, order_status from OrderParquetTable where order_status='COMPLETE'""")
+parSQL.show()
+parSQL.write.option("compression", "gzip").json("/user/traceahotmail/Simplilearn/result/scenario1/solution2")
+
+--=did not work well
+parSQL.write.json("/user/traceahotmail/Simplilearn/result/scenario1/solution2", compression='gzip')
+
+2.4
+
+cag = spark.read.options(header = 'False', inferSchema = 'True', delimiter = '\t').csv("/user/traceahotmail/Simplilearn/data-files/customers-tab-delimited/part-m-00000")
+cag.createOrReplaceTempView("CaguasCust")
+cag2 = spark.sql("Select * from CaguasCust where _c6=='Caguas'")
+cag2.write.orc("/user/traceahotmail/Simplilearn/result/scenario2/solution3", compression='snappy')
+
+2.5
+cat = spark.read.csv("/user/traceahotmail/Simplilearn/data-files/categories/part-m-00000")
+cat.show()
+cat.write.csv("/user/traceahotmail/Simplilearn/result/scenario3/solution4")
+
+
+
+
